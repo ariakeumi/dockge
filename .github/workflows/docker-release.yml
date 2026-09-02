@@ -1,15 +1,23 @@
-name: Nightly Release
+name: Docker Release (fork)
 
 on:
-  schedule:
-    # Runs at 2:00 AM UTC every day
-    - cron: "0 2 * * *"
-  workflow_dispatch:  # Allow manual trigger
+  push:
+    branches: [master]
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Extra image tag (e.g. 1.4.2 or beta). "latest" is always pushed.'
+        required: false
+        default: ''
 
-permissions: {}
+# Push images to this fork's own GHCR: ghcr.io/ariakeumi/dockge
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/dockge
 
 jobs:
-  release-nightly:
+  build-push:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
@@ -18,8 +26,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -27,14 +33,24 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Fork note: upstream also pushes to Docker Hub with DOCKERHUB_USERNAME/DOCKERHUB_TOKEN,
-      # which are not available on this fork. Images go to this fork's GHCR only.
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker meta
+        id: meta
+        run: |
+          tags="${IMAGE}:latest"
+          # master builds get a rolling "master" tag; manual runs may add an extra tag
+          if [ "${{ github.event_name }}" = "push" ]; then
+            tags="$tags ${IMAGE}:master"
+          elif [ -n "${{ github.event.inputs.tag }}" ]; then
+            tags="$tags ${IMAGE}:${{ github.event.inputs.tag }}"
+          fi
+          echo "tags=$tags" >> "$GITHUB_OUTPUT"
 
       - name: Use Node.js 22
         uses: actions/setup-node@v4
@@ -47,14 +63,14 @@ jobs:
           npm clean-install --no-fund
           npm run build:frontend
 
-      - name: Build and push nightly image
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./docker/Dockerfile
-          target: nightly
+          target: release
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/dockge:nightly
+          tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
