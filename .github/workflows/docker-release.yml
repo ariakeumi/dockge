@@ -25,7 +25,7 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -43,17 +43,20 @@ jobs:
       - name: Docker meta
         id: meta
         run: |
-          tags="${IMAGE}:latest"
-          # master builds get a rolling "master" tag; manual runs may add an extra tag
-          if [ "${{ github.event_name }}" = "push" ]; then
-            tags="$tags ${IMAGE}:master"
-          elif [ -n "${{ github.event.inputs.tag }}" ]; then
-            tags="$tags ${IMAGE}:${{ github.event.inputs.tag }}"
-          fi
-          echo "tags=$tags" >> "$GITHUB_OUTPUT"
+          {
+            echo "tags<<EOF"
+            echo "${IMAGE}:latest"
+            # master builds get a rolling "master" tag; manual runs may add an extra tag
+            if [ "${{ github.event_name }}" = "push" ]; then
+              echo "${IMAGE}:master"
+            elif [ -n "${{ github.event.inputs.tag }}" ]; then
+              echo "${IMAGE}:${{ github.event.inputs.tag }}"
+            fi
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Use Node.js 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
 
