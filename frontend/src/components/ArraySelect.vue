@@ -105,8 +105,6 @@ export default {
 @import "../styles/vars.scss";
 
 .list-group {
-    background-color: $dark-bg2;
-
     li {
         display: flex;
         align-items: center;
@@ -114,13 +112,28 @@ export default {
 
         .domain-input {
             flex-grow: 1;
-            background-color: $dark-bg2;
             border: none;
-            color: $dark-font-color;
             outline: none;
+            color: #212529;
+            background-color: transparent;
 
             &::placeholder {
-                color: #1d2634;
+                color: #6c757d;
+            }
+        }
+    }
+
+    .dark & {
+        background-color: $dark-bg2;
+
+        li {
+            .domain-input {
+                background-color: $dark-bg2;
+                color: $dark-font-color;
+
+                &::placeholder {
+                    color: #1d2634;
+                }
             }
         }
     }

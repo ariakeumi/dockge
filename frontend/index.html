@@ -20,6 +20,17 @@
     </style>
 </head>
 <body>
+<script>
+    // Apply the theme class before the app mounts to avoid a flash of the wrong theme.
+    // Keep the default ("dark") in sync with frontend/src/mixins/theme.ts.
+    (function () {
+        let theme = localStorage.theme || "dark";
+        if (theme === "auto") {
+            theme = (window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+        }
+        document.body.classList.add(theme);
+    })();
+</script>
 <noscript>
     <div class="noscript-message">
         Sorry, you don't seem to have JavaScript enabled or your browser

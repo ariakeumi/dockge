@@ -9,7 +9,7 @@
                         :extensions="extensionsEnv"
                         minimal
                         wrap="true"
-                        dark="true"
+                        :dark="$root.theme === 'dark'"
                         tab="true"
                         :hasFocus="editorFocus"
                         @change="onChange"
@@ -32,7 +32,7 @@
 <script>
 import CodeMirror from "vue-codemirror6";
 import { python } from "@codemirror/lang-python"; // good enough for .env key=value highlighting
-import { dracula as editorTheme } from "thememirror";
+import { dracula, tomorrow } from "thememirror";
 import { lineNumbers, EditorView } from "@codemirror/view";
 import { ref } from "vue";
 
@@ -50,18 +50,25 @@ export default {
             return null;
         };
 
-        const extensionsEnv = [
-            editorTheme,
-            python(),
-            lineNumbers(),
-            EditorView.focusChangeEffect.of(focusEffectHandler),
-        ];
-
-        return { editorFocus,
-            extensionsEnv };
+        return {
+            editorFocus,
+            focusEffectHandler
+        };
     },
 
     computed: {
+        /**
+         * CodeMirror theme that follows the app theme.
+         * vue-codemirror6 reconfigures the editor when this computed value changes.
+         */
+        extensionsEnv() {
+            return [
+                this.$root.theme === "dark" ? dracula : tomorrow,
+                python(),
+                lineNumbers(),
+                EditorView.focusChangeEffect.of(this.focusEffectHandler),
+            ];
+        },
         settings() {
             return this.$parent.$parent.$parent.settings;
         },
@@ -92,7 +99,11 @@ export default {
     font-size: 14px;
 
     &.edit-mode {
-        background-color: #2c2f38 !important;
+        background-color: white !important;
+
+        .dark & {
+            background-color: #2c2f38 !important;
+        }
     }
 }
 </style>

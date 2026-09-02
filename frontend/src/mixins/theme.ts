@@ -59,6 +59,11 @@ export default defineComponent({
             this.userTheme = "dark";
         }
 
+        // Listen to system theme changes, so "auto" mode can react to it
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+            this.system = e.matches ? "dark" : "light";
+        });
+
         document.body.classList.add(this.theme);
         this.updateThemeColorMeta();
     },

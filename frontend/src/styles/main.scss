@@ -36,7 +36,11 @@ textarea.form-control {
 }
 
 ::placeholder {
-    color: $dark-font-color3;
+    color: #6c757d;
+
+    .dark & {
+        color: $dark-font-color3;
+    }
 }
 
 .incident a,
@@ -119,17 +123,21 @@ optgroup {
 }
 
 .btn-primary {
-    color: white;
+    color: $dark-font-color2;
     background: $primary-gradient;
 
     &:hover, &:active, &:focus, &.active {
-        color: white;
+        color: $dark-font-color2;
         background: $primary-gradient-active;
         border-color: $highlight;
     }
+}
+
+.btn-outline-primary {
+    color: $primary-dark;
 
     .dark & {
-        color: $dark-font-color2;
+        color: $primary;
     }
 }
 
@@ -233,6 +241,20 @@ optgroup {
     }
 }
 
+// Active nav pill / primary badge: dark text on the light-blue primary in light mode too
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: $dark-font-color2;
+    background: $primary-gradient;
+
+    &:hover {
+        background: $primary-gradient-active;
+    }
+}
+
+.bg-primary {
+    color: $dark-font-color2;
+}
+
 // Dark Theme override here
 .dark {
     background-color: #090c10;
@@ -311,15 +333,6 @@ optgroup {
     .table-hover > tbody > tr:hover > * {
         --bs-table-accent-bg: #070a10;
         color: $dark-font-color;
-    }
-
-    .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-        color: $dark-font-color2;
-        background: $primary-gradient;
-
-        &:hover {
-            background: $primary-gradient-active;
-        }
     }
 
     .bg-primary {
@@ -599,7 +612,11 @@ h5.settings-subheading::after {
     display: block;
     width: 50%;
     padding-top: 8px;
-    border-bottom: 1px solid $dark-border-color;
+    border-bottom: 1px solid #dee2e6;
+
+    .dark & {
+        border-bottom-color: $dark-border-color;
+    }
 }
 
 /* required class */
@@ -670,7 +687,11 @@ code {
 }
 
 .form-text {
-    color: $dark-font-color3;
+    color: #6c757d;
+
+    .dark & {
+        color: $dark-font-color3;
+    }
 }
 
 

@@ -440,7 +440,11 @@ export default {
 
 .search-icon {
     padding: 10px;
-    color: #c0c0c0;
+    color: #6c757d;
+
+    .dark & {
+        color: #c0c0c0;
+    }
 
     // Clear filter button (X)
     svg[data-icon="times"] {

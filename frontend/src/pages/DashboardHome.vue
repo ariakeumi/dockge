@@ -370,7 +370,11 @@ table {
 
 .remove-agent {
     cursor: pointer;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(0, 0, 0, 0.3);
+
+    .dark & {
+        color: rgba(255, 255, 255, 0.3);
+    }
 }
 
 .agent {

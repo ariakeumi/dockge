@@ -392,6 +392,10 @@ export default defineComponent({
         color: #6c757d;
         .tag {
             color: #33383b;
+
+            .dark & {
+                color: $dark-font-color;
+            }
         }
     }
 

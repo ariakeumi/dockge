@@ -177,7 +177,7 @@
                             :extensions="extensions"
                             minimal
                             wrap="true"
-                            dark="true"
+                            :dark="$root.theme === 'dark'"
                             tab="true"
                             :disabled="!isEditMode"
                             :hasFocus="editorFocus"
@@ -198,7 +198,7 @@
                                 :extensions="extensionsEnv"
                                 minimal
                                 wrap="true"
-                                dark="true"
+                                :dark="$root.theme === 'dark'"
                                 tab="true"
                                 :disabled="!isEditMode"
                                 :hasFocus="editorFocus"
@@ -249,7 +249,7 @@
 import CodeMirror from "vue-codemirror6";
 import { yaml } from "@codemirror/lang-yaml";
 import { python } from "@codemirror/lang-python";
-import { dracula as editorTheme } from "thememirror";
+import { dracula, tomorrow } from "thememirror";
 import { lineNumbers, EditorView } from "@codemirror/view";
 import { parseDocument, Document } from "yaml";
 
@@ -304,23 +304,10 @@ export default {
             return null;
         };
 
-        const extensions = [
-            editorTheme,
-            yaml(),
-            lineNumbers(),
-            EditorView.focusChangeEffect.of(focusEffectHandler)
-        ];
-
-        const extensionsEnv = [
-            editorTheme,
-            python(),
-            lineNumbers(),
-            EditorView.focusChangeEffect.of(focusEffectHandler)
-        ];
-
-        return { extensions,
-            extensionsEnv,
-            editorFocus };
+        return {
+            editorFocus,
+            focusEffectHandler
+        };
     },
     yamlDoc: null,  // For keeping the yaml comments
     data() {
@@ -347,6 +334,28 @@ export default {
         };
     },
     computed: {
+        /**
+         * CodeMirror extensions. The editor theme follows the app theme;
+         * vue-codemirror6 reconfigures the editor when these computed values change.
+         */
+        extensions() {
+            return [
+                this.$root.theme === "dark" ? dracula : tomorrow,
+                yaml(),
+                lineNumbers(),
+                EditorView.focusChangeEffect.of(this.focusEffectHandler)
+            ];
+        },
+
+        extensionsEnv() {
+            return [
+                this.$root.theme === "dark" ? dracula : tomorrow,
+                python(),
+                lineNumbers(),
+                EditorView.focusChangeEffect.of(this.focusEffectHandler)
+            ];
+        },
+
         endpointDisplay() {
             return this.$root.endpointDisplayFunction(this.endpoint);
         },
